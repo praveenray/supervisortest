@@ -1,4 +1,4 @@
-Sample code to test and demostrate gleam's [supervisor](https://hexdocs.pm/gleam_otp/gleam/otp/supervisor.html) module.
+Sample code to test and demonstrate gleam's [supervisor](https://hexdocs.pm/gleam_otp/gleam/otp/supervisor.html) module.
 
 _Running:_
 

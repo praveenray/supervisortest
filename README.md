@@ -1,6 +1,5 @@
 Sample code to test and demostrate gleam's supervisor module.
 
-
 _Running:_
 
 1. _gleam run_

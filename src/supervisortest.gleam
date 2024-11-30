@@ -1,4 +1,3 @@
-import argv
 import gleam/erlang/process.{type Subject}
 import gleam/erlang.{type Reference}
 import gleam/otp/supervisor as sup
@@ -17,29 +16,8 @@ pub fn main() {
     driver.start_actor(ets_table, myself)
   })
 
-  let assert Ok(_) = case argv.load().arguments {
-    ["delayed"] -> supervise_with_specs(child, driver_child)
-    _ -> supervise(child, driver_child)
-  }
-
+  let assert Ok(_) = supervise(child, driver_child)
   process.sleep_forever()
-}
-
-fn supervise_with_specs(
-  worker: sup.ChildSpec(#(Subject(String), String), Nil, Nil),
-  driver_child: sup.ChildSpec(String, Nil, Nil)
-) {
-  let sup_spec = sup.Spec(
-    argument: Nil,
-    max_frequency: 1000,
-    frequency_period: 1000,
-    init: fn(children) {
-      children
-      |> sup.add(worker)
-      |> sup.add(driver_child)
-    }
-  )
-  sup.start_spec(sup_spec)
 }
 
 fn supervise(

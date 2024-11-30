@@ -8,7 +8,7 @@ import gleam/io
 pub const my_name = "worker"
 
 pub type State {
-    State(counter: Int)
+    State()
 }
 pub fn start_actor(ets_table: Reference) {
   let spec = actor.Spec(
@@ -26,7 +26,7 @@ fn init(ets_table: Reference) -> actor.InitResult(State, #(Subject(String), Stri
   let myself = process.new_subject()
   let assert Ok(Nil) = add_subject(ets_table, my_name, myself)
   let selector = process.new_selector() |> process.selecting(myself, function.identity)
-  actor.Ready(State(0), selector)
+  actor.Ready(State, selector)
 }
 
 fn loop(msg: #(Subject(String), String), state: State) -> actor.Next(#(Subject(String), String), State) {
@@ -46,7 +46,7 @@ fn loop(msg: #(Subject(String), String), state: State) -> actor.Next(#(Subject(S
     }
   }
 
-  actor.continue(State(state.counter+1))
+  actor.continue(state)
 }
 
 @external(erlang, "erlang_functions", "add_subject")

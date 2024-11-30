@@ -9,13 +9,13 @@ import worker
 pub const my_name = "driver"
 
 pub type State {
-    State(ets_table: Reference, parent_subject: Subject(String))
+    State(ets_table: Reference)
 }
 
-pub fn start_actor(ets_table: Reference, parent_subject: Subject(String)) -> Result(Subject(String), StartError) {
+pub fn start_actor(ets_table: Reference) -> Result(Subject(String), StartError) {
   let spec = actor.Spec(
     init: fn() {
-      init(ets_table, parent_subject)
+      init(ets_table)
     },
     loop: loop,
     init_timeout: 10_000
@@ -23,7 +23,7 @@ pub fn start_actor(ets_table: Reference, parent_subject: Subject(String)) -> Res
   actor.start_spec(spec)
 }
 
-fn init(ets_table: Reference, parent_subject: Subject(String)) -> actor.InitResult(State, String) {
+fn init(ets_table: Reference) -> actor.InitResult(State, String) {
   let self = string.inspect(process.self())
   io.println("driver init: " <> self)
   let myself = process.new_subject()
@@ -31,7 +31,7 @@ fn init(ets_table: Reference, parent_subject: Subject(String)) -> actor.InitResu
   let assert Ok(Nil) = add_subject(ets_table, my_name, myself)
 
   process.send(myself, "continue")
-  actor.Ready(State(ets_table, parent_subject), selector)
+  actor.Ready(State(ets_table), selector)
 }
 
 fn loop(_msg: String, state: State) -> actor.Next(String, State) {
@@ -40,7 +40,7 @@ fn loop(_msg: String, state: State) -> actor.Next(String, State) {
   let assert Ok(worker) = get_subject(state.ets_table, worker.my_name)
   process.call(worker, fn(sender) {
     #(sender, string.trim(line))
-  }, 10_000) // this might cause exception randomly
+  }, 10_000)
 
   process.send(myself, "continue")
   actor.continue(state)

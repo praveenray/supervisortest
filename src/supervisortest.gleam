@@ -8,12 +8,11 @@ pub const ets_table = "global_table"
 
 pub fn main() {
   let assert Ok(ets_table) = create_ets_table(ets_table)
-  let myself = process.new_subject()
   let child = sup.worker(fn(_) {
     worker.start_actor(ets_table)
   })
   let driver_child = sup.worker(fn(_) {
-    driver.start_actor(ets_table, myself)
+    driver.start_actor(ets_table)
   })
 
   let assert Ok(_) = supervise(child, driver_child)

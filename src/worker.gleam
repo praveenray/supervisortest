@@ -39,10 +39,8 @@ fn loop(msg: #(Subject(String), String), state: State) -> actor.Next(#(Subject(S
         }
         _ -> {
           let reply = "Continuing with Worker " <> string.inspect(process.self()) <> " " <> request
-          //process.sleep(500)
           process.send(sender, reply)
           io.println(reply)
-
         }
       }
     }
